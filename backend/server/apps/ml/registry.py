@@ -5,6 +5,12 @@ class MLRegistry:
     def __init__(self):
         self.endpoints = {}
 
+    @staticmethod
+    def get_key(endpoint_name, algorithm_status, algorithm_version):
+        if algorithm_status == "production":
+            return "_".join([endpoint_name, algorithm_status])
+        return "_".join([endpoint_name, algorithm_status, algorithm_version])
+
     def add_algorithm(self, endpoint_name, algorithm_object, algorithm_name, 
                     algorithm_status, algorithm_version, owner,
                     algorithm_description, algorithm_code):
@@ -22,7 +28,7 @@ class MLRegistry:
                 parent_endpoint=endpoint)
             
         # specify the key
-        key = endpoint_name + "_" + algorithm_status
+        key = MLRegistry.get_key(endpoint_name, algorithm_status, algorithm_version)
         # add to registry
         self.endpoints[key] ={"algorithm_object": algorithm_object,
                               "database_object": database_object }

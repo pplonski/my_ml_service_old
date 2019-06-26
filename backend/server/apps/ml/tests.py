@@ -33,7 +33,7 @@ class MLTests(TestCase):
         endpoint_name = "income_classifier"
         algorithm_object = RandomForestClassifier()
         algorithm_name = "random forest"
-        algorithm_status = "testing"
+        algorithm_status = "production"
         algorithm_version = "0.0.1"
         algorithm_owner = "Piotr"
         algorithm_description = "Random Forest with simple pre- and post-processing"

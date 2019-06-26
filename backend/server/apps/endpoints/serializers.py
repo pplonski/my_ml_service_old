@@ -28,6 +28,6 @@ class MLRequestSerializer(serializers.ModelSerializer):
             "response",
             "feedback",
             "created_at",
-            "parent_mlmodel",
+            "parent_mlalgorithm",
         )
         fields = read_only_fields
