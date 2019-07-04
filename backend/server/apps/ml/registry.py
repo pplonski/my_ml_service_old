@@ -21,7 +21,6 @@ class MLRegistry:
                 owner=owner,
                 parent_endpoint=endpoint)
         if algorithm_created:
-            print("Algorithm created. Creating status") 
             status = MLAlgorithmStatus(status = algorithm_status,
                                         created_by = owner,
                                         parent_mlalgorithm = database_object,

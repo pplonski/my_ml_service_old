@@ -21,11 +21,10 @@ class MLAlgorithm(models.Model):
         name: The name of the algorithm.
         description: The short description how algorithm works.
         code: The code of the algorithm.
-        status: The status of algorithm in the endpoint. Can be: testing, staging, production.
         version: The version of the algorithm similar to software versioning.
         owner: The name of the owner.
-        created_at: The data when MLAlgorithm was added.
-        parent_endpoint: The reference to the endpoint.
+        created_at: The date when MLAlgorithm was added.
+        parent_endpoint: The reference to the Endpoint.
     '''
     name = models.CharField(max_length=128)
     description = models.CharField(max_length=1000)
@@ -36,6 +35,16 @@ class MLAlgorithm(models.Model):
     parent_endpoint = models.ForeignKey(Endpoint, on_delete=models.CASCADE)
 
 class MLAlgorithmStatus(models.Model):
+    '''
+    The MLAlgorithmStatus represent status of the MLAlgorithm which can change during the time.
+
+    Attributes:
+        status: The status of algorithm in the endpoint. Can be: testing, staging, production, ab_testing.
+        created_by: The name of creator.
+        created_at: The date of status creation.
+        parent_mlalgorithm: The reference to corresponding MLAlgorithm.
+        parent_endpoint: The reference to corresonding Endpoint.
+    '''
     status = models.CharField(max_length=128)
     created_by = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
@@ -59,10 +68,21 @@ class MLRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     parent_mlalgorithm = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE)
 
-'''
+
 class ABTest(models.Model):
+    '''
+    The ABTest will keep information about A/B tests.
+
+    Attributes:
+        title: The title of test.
+        created_by: The name of creator.
+        created_at: The date of test creation.
+        parent_mlalgorithm_1: The reference to the first corresponding MLAlgorithm.
+        parent_mlalgorithm_2: The reference to the second corresponding MLAlgorithm.
+    '''
     title = models.CharField(max_length=10000) 
+    created_by = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
-    parent_mlalgorithm_1 = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE)
-    parent_mlalgorithm_2 = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE)
-'''
+    parent_mlalgorithm_1 = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE, related_name="parent_mlalgorithm_1")
+    parent_mlalgorithm_2 = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE, related_name="parent_mlalgorithm_2")
+
