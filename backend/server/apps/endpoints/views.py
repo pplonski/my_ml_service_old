@@ -9,6 +9,8 @@ from apps.endpoints.serializers import EndpointSerializer
 from apps.endpoints.models import MLAlgorithm
 from apps.endpoints.serializers import MLAlgorithmSerializer
 
+from apps.endpoints.models import MLAlgorithmStatus
+
 from apps.endpoints.models import MLRequest
 from apps.endpoints.serializers import MLRequestSerializer
 
@@ -41,28 +43,29 @@ class PredictView(views.APIView):
     def post(self, request, endpoint_name, format=None):
         
         algorithm_status = self.request.query_params.get("status", "production")
-        algorithm_version = self.request.query_params.get("version", "0.0.0")
+        algorithm_version = self.request.query_params.get("version")
         
-        key = MLRegistry.get_key(endpoint_name, algorithm_status, algorithm_version)
-        if key not in registry.endpoints:
+        statuses = MLAlgorithmStatus.objects.filter(parent_endpoint__name = endpoint_name, status = algorithm_status)
+        print("objs", statuses)
+        
+        if len(statuses) == 0:
             return Response(
                 {"status": "Error", "message": "ML algorithm not available"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        algorithm_object = registry.endpoints[key]["algorithm_object"]
-        database_object = registry.endpoints[key]["database_object"]
-
+        algorithm_object = registry.endpoints[statuses[0].parent_mlalgorithm.id]
         prediction = algorithm_object.compute_prediction(request.data)
 
         ml_request = MLRequest(
             input_data=json.dumps(request.data),
             response=prediction,
             feedback="",
-            parent_mlalgorithm=database_object,
+            parent_mlalgorithm=statuses[0].parent_mlalgorithm,
         )
         ml_request.save()
 
         prediction["request_id"] = ml_request.id 
 
         return Response(prediction)
+        

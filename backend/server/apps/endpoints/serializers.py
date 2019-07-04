@@ -14,7 +14,7 @@ class EndpointSerializer(serializers.ModelSerializer):
 class MLAlgorithmSerializer(serializers.ModelSerializer):
     class Meta:
         model = MLAlgorithm
-        read_only_fields = ("id", "name", "description", "code", "status", 
+        read_only_fields = ("id", "name", "description", "code", 
                             "version", "owner", "created_at", "parent_endpoint")
         fields = read_only_fields
 
