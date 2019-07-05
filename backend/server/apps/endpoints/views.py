@@ -59,6 +59,7 @@ class PredictView(views.APIView):
         algorithm_version = self.request.query_params.get("version")
 
         statuses = MLAlgorithmStatus.objects.filter(parent_endpoint__name = endpoint_name, status = algorithm_status)
+        print(statuses)
 
         if algorithm_version is not None:
             statuses = statuses.filter(parent_mlalgorithm__version = algorithm_version)

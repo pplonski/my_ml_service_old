@@ -41,11 +41,17 @@ class MLRequestSerializer(serializers.ModelSerializer):
             "id",
             "input_data",
             "response",
+            "created_at",
+            "parent_mlalgorithm",
+        )
+        fields =  (
+            "id",
+            "input_data",
+            "response",
             "feedback",
             "created_at",
             "parent_mlalgorithm",
         )
-        fields = read_only_fields
 
 class ABTestSerializer(serializers.ModelSerializer):
     class Meta:
