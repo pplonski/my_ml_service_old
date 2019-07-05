@@ -62,9 +62,9 @@ class MLRequest(models.Model):
         created_at: The date when request was created.
         parent_mlalgorithm: The reference to MLAlgorithm used to compute response.
     '''
-    input_data = models.CharField(max_length=10000) 
-    response = models.CharField(max_length=10000) 
-    feedback = models.CharField(max_length=10000) 
+    input_data = models.CharField(max_length=10000)
+    response = models.CharField(max_length=10000)
+    feedback = models.CharField(max_length=10000)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     parent_mlalgorithm = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE)
 
@@ -80,9 +80,10 @@ class ABTest(models.Model):
         parent_mlalgorithm_1: The reference to the first corresponding MLAlgorithm.
         parent_mlalgorithm_2: The reference to the second corresponding MLAlgorithm.
     '''
-    title = models.CharField(max_length=10000) 
+    title = models.CharField(max_length=10000)
     created_by = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    ended_at = models.DateTimeField(blank=True, null=True)
+
     parent_mlalgorithm_1 = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE, related_name="parent_mlalgorithm_1")
     parent_mlalgorithm_2 = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE, related_name="parent_mlalgorithm_2")
-

@@ -23,6 +23,7 @@ from rest_framework.response import Response
 from apps.ml.registry import MLRegistry
 from server.wsgi import registry
 from django.db import transaction
+from rest_framework.exceptions import APIException
 
 class EndpointViewSet(
     mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
@@ -39,7 +40,7 @@ class MLAlgorithmViewSet(
 
 class MLAlgorithmStatusViewSet(
     mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin, mixins.UpdateModelMixin
 ):
     serializer_class = MLAlgorithmStatusSerializer
     queryset = MLAlgorithmStatus.objects.all()
@@ -53,15 +54,15 @@ class MLRequestViewSet(
 
 class PredictView(views.APIView):
     def post(self, request, endpoint_name, format=None):
-        
+
         algorithm_status = self.request.query_params.get("status", "production")
         algorithm_version = self.request.query_params.get("version")
-        
+
         statuses = MLAlgorithmStatus.objects.filter(parent_endpoint__name = endpoint_name, status = algorithm_status)
-        
+
         if algorithm_version is not None:
             statuses = statuses.filter(parent_mlalgorithm__version = algorithm_version)
-        
+
         if len(statuses) == 0:
             return Response(
                 {"status": "Error", "message": "ML algorithm is not available"},
@@ -84,13 +85,13 @@ class PredictView(views.APIView):
         )
         ml_request.save()
 
-        prediction["request_id"] = ml_request.id 
+        prediction["request_id"] = ml_request.id
 
         return Response(prediction)
-        
+
 class ABTestViewSet(
     mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin, mixins.UpdateModelMixin
 ):
     serializer_class = ABTestSerializer
     queryset = ABTest.objects.all()
@@ -100,17 +101,17 @@ class ABTestViewSet(
             with transaction.atomic():
                 instance = serializer.save()
                 # update status for first algorithm
-                status_1 = MLAlgorithmStatus(status = "ab_testing", 
-                                created_by=instance.created_by, 
-                                parent_mlalgorithm = instance.parent_mlalgorithm_1, 
+                status_1 = MLAlgorithmStatus(status = "ab_testing",
+                                created_by=instance.created_by,
+                                parent_mlalgorithm = instance.parent_mlalgorithm_1,
                                 parent_endpoint=instance.parent_mlalgorithm_1.parent_endpoint)
                 status_1.save()
                 # update status for second algorithm
-                status_2 = MLAlgorithmStatus(status = "ab_testing", 
-                                created_by=instance.created_by, 
-                                parent_mlalgorithm = instance.parent_mlalgorithm_2, 
+                status_2 = MLAlgorithmStatus(status = "ab_testing",
+                                created_by=instance.created_by,
+                                parent_mlalgorithm = instance.parent_mlalgorithm_2,
                                 parent_endpoint=instance.parent_mlalgorithm_2.parent_endpoint)
                 status_2.save()
-                
+
         except Exception as e:
             raise APIException(str(e))
