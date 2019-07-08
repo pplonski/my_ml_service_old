@@ -30,8 +30,8 @@ class MLAlgorithmSerializer(serializers.ModelSerializer):
 class MLAlgorithmStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = MLAlgorithmStatus
-        read_only_fields = ("id", "created_by", "parent_endpoint")
-        fields = ("id", "status", "created_by", "created_at",
+        read_only_fields = ("id", "active")
+        fields = ("id", "active", "status", "created_by", "created_at",
                             "parent_mlalgorithm")
 
 class MLRequestSerializer(serializers.ModelSerializer):
@@ -40,6 +40,7 @@ class MLRequestSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "input_data",
+            "full_response",
             "response",
             "created_at",
             "parent_mlalgorithm",
@@ -47,6 +48,7 @@ class MLRequestSerializer(serializers.ModelSerializer):
         fields =  (
             "id",
             "input_data",
+            "full_response",
             "response",
             "feedback",
             "created_at",
@@ -58,7 +60,9 @@ class ABTestSerializer(serializers.ModelSerializer):
         model = ABTest
         read_only_fields = (
             "id",
-            "created_at"
+            "ended_at",
+            "created_at",
+            "summary",
         )
         fields = (
             "id",
@@ -66,6 +70,7 @@ class ABTestSerializer(serializers.ModelSerializer):
             "created_by",
             "created_at",
             "ended_at",
+            "summary",
             "parent_mlalgorithm_1",
             "parent_mlalgorithm_2",
             )
