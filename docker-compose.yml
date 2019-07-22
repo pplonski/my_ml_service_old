@@ -8,14 +8,14 @@ services:
             - 8000:8000
         volumes:
             - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-            - static_volume:/app/backend/server/django_static
+            - static_volume:/app/backend/server/static
     wsgiserver:
         build:
             context: .
             dockerfile: ./docker/backend/Dockerfile
         entrypoint: /app/docker/backend/wsgi-entrypoint.sh
         volumes:
-            - static_volume:/app/backend/server/django_static
+            - static_volume:/app/backend/server/static
         expose:
             - 8000
 volumes:

@@ -15,7 +15,11 @@ RUN pip3 install -r requirements.txt
 
 ADD ./backend /app/backend
 ADD ./docker /app/docker
+ADD ./research /app/research
 
 RUN ls /app 
 RUN ls /app/docker 
 RUN ls /app/docker/backend
+
+#RUN mkdir -p /app/backend/server/staticfiles
+RUN mkdir -p /app/backend/server/static
